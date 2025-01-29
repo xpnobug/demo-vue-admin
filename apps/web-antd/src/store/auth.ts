@@ -1,21 +1,25 @@
-import type { Recordable, UserInfo } from '@vben/types';
+import type {Recordable, UserInfo} from '@vben/types';
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {ref} from 'vue';
+import {useRouter} from 'vue-router';
 
-import { DEFAULT_HOME_PATH, LOGIN_PATH } from '@vben/constants';
-import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
+import {DEFAULT_HOME_PATH, LOGIN_PATH} from '@vben/constants';
+import {useAccessStore, useUserStore} from '@vben/stores';
 
-import { notification } from 'ant-design-vue';
-import { defineStore } from 'pinia';
+import {notification} from 'ant-design-vue';
+import {defineStore} from 'pinia';
 
-import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
-import { $t } from '#/locales';
+import {getUserInfo, logoutAuth} from '#/api';
+import {$t} from '#/locales';
+
+import {useUserStoreAuth} from '#/store';
+import {encryptByRsa} from "#/utils/encrypt";
 
 export const useAuthStore = defineStore('auth', () => {
   const accessStore = useAccessStore();
   const userStore = useUserStore();
   const router = useRouter();
+  const userStoreAuth = useUserStoreAuth()
 
   const loginLoading = ref(false);
 
@@ -24,15 +28,19 @@ export const useAuthStore = defineStore('auth', () => {
    * Asynchronously handle the login process
    * @param params 登录表单数据
    */
-  async function authLogin(
-    params: Recordable<any>,
-    onSuccess?: () => Promise<void> | void,
-  ) {
+  async function authLogin(params: Recordable<any>, onSuccess?: () => Promise<void> | void) {
     // 异步处理用户登录操作并获取 accessToken
     let userInfo: null | UserInfo = null;
     try {
       loginLoading.value = true;
-      const { token } = await loginApi(params);
+
+      await userStoreAuth.accountLogin({
+        username: params.username,
+        password: encryptByRsa(params.password) || '',
+        captcha: params.captcha,
+        uuid: params.uuid,
+      });
+      const token = userStoreAuth.token;
       // 如果成功获取到 accessToken
       if (token) {
         accessStore.setAccessToken(token);
@@ -74,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout(redirect: boolean = true) {
     try {
-      await logoutApi();
+      await logoutAuth();
     } catch {
       // 不做任何处理
     }
@@ -95,8 +103,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function fetchUserInfo() {
     let userInfo: null | UserInfo = null;
-    userInfo = await getUserInfoApi();
-    userStore.setUserInfo(userInfo);
+    userInfo = await getUserInfo();
+    userStore.setUserInfo(userInfo.data);
     return userInfo;
   }
 

@@ -54,6 +54,10 @@
     "@codemirror/lang-vue": "^0.1.2",
     "@codemirror/lang-javascript": "^6.2.1",
     "vue-codemirror6": "^1.1.27",
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "crypto-js": "^4.2.0",
+    "jsencrypt": "^3.3.2",
+    "query-string": "^9.0.0",
+    "vite-plugin-svg-icons": "^2.0.1"
   }
 }

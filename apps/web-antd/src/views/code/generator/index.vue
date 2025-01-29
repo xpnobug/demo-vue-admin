@@ -21,10 +21,13 @@
         </a-button>
       </template>
       <template #bodyCell="{ column, record, rowIndex, index }">
+        <template v-if="column.dataIndex === 'createTime' && record.createTime != null">
+          {{ timeUtils.formatDate(record.createTime,true) }}
+        </template>
         <template v-if="column.dataIndex === 'action'">
           <a-space>
             <!--          v-permission="['code:generator:config']"-->
-            <a-typography-link  title="配置" @click="onConfig(record.tableName, record.comment)">配置</a-typography-link>
+            <a-typography-link title="配置" @click="onConfig(record.tableName, record.comment)">配置</a-typography-link>
             <!--          v-permission="['code:generator:preview']"-->
             <a-typography-link
               :disabled="!record.createTime"
@@ -50,7 +53,7 @@ import { generate, listGenConfig } from '#/api/code/generator'
 import GiTable from '#/components/GiTable/index.vue';
 import { useTable } from '#/hooks'
 import { isMobile } from '#/utils'
-import type { TableInstanceColumns } from '#/components/GiTable/type'
+import { timeUtils } from '#/utils/TimeUtil'
 
 defineOptions({ name: 'CodeGenerator' })
 const GenPreviewModal = defineAsyncComponent(() => import('./GenPreviewModal.vue'))
@@ -104,7 +107,6 @@ const onPreview = (tableName: string) => {
 // 生成
 const onGenerate = async (tableNames: Array<string>) => {
   const res = await generate(tableNames)
-  console.log(res)
   const contentDisposition = res.headers['content-disposition']
   const pattern = /filename=([^;]+\.[^.;]+);*/
   const result = pattern.exec(contentDisposition) || ''

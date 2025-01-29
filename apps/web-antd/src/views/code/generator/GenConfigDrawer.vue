@@ -264,14 +264,13 @@ const handleChangeSort = (newDataList: FieldConfigResp[]) => {
 
 // 保存
 const save = async () => {
-  console.log(form)
   try {
     const isInvalid = await formRef.value?.formRef?.validate()
     console.log(isInvalid)
-    if (isInvalid) {
-      activeKey.value = '1'
-      return false
-    }
+    // if (isInvalid) {
+    //   activeKey.value = '1'
+    //   return false
+    // }
     await saveGenConfig(form.tableName, {
       genConfig: form,
       fieldConfigs: dataList.value,

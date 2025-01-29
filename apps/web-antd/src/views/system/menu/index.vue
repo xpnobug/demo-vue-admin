@@ -15,26 +15,26 @@
       <template #toolbar-left>
         <a-input v-model="title" allow-clear placeholder="请输入菜单标题">
           <template #prefix>
-
+            <SearchOutlined />
           </template>
         </a-input>
         <a-button @click="reset">
           <template #icon>
-
+            <ReloadOutlined />
           </template>
           <template #default>重置</template>
         </a-button>
       </template>
       <template #toolbar-right>
         <a-button type="primary" @click="onAdd()">
-          <!--          <template #icon><icon-plus /></template>-->
+          <template #icon><PlusCircleOutlined /></template>
           <template #default>新增</template>
         </a-button>
-        <a-tooltip content="展开/折叠">
+        <a-tooltip title="展开/折叠">
           <a-button @click="onExpanded">
             <template #icon>
-              <!--              <icon-list v-if="!isExpanded" />-->
-              <!--              <icon-mind-mapping v-else />-->
+              <UpCircleOutlined v-if="!isExpanded"/>
+              <DownCircleOutlined v-else/>
             </template>
           </a-button>
         </a-tooltip>
@@ -93,6 +93,7 @@
 
 <script lang="ts" setup>
 import {computed, reactive, ref} from 'vue'
+import { PlusCircleOutlined, UpCircleOutlined, DownCircleOutlined, ReloadOutlined, SearchOutlined} from '@ant-design/icons-vue';
 import MenuAddModal from './MenuAddModal.vue'
 import {deleteMenu, listMenu, type MenuQuery, type MenuResp} from '#/api/system/menu'
 import GiTable from '#/components/GiTable/index.vue';

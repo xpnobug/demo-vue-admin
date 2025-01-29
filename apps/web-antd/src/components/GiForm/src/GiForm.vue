@@ -14,7 +14,10 @@
 <!--          v-bind="item.gridItemProps || props.options.gridItem"-->
 <!--        >-->
           <a-form-item
-            :disabled="isDisabled(item.disabled)" :field="item.field" :label="item.label" :rules="item.rules"
+            :disabled="isDisabled(item.disabled)"
+            :name="item.field"
+            :label="item.label"
+            :rules="item.rules"
             v-bind="item.formItemProps"
           >
             <slot
@@ -40,7 +43,6 @@
                 :is="`a-${item.type}`" v-else
                 v-model:value="modelValue[item.field as keyof typeof modelValue]"
                 v-bind="getComponentBindProps(item)"
-                @update:model-value="valueChange($event, item.field)"
               ></component>
 
             </slot>

@@ -1,15 +1,17 @@
-import {ref} from 'vue'
-import {defineStore} from 'pinia'
-import type {RouteRecordRaw} from 'vue-router'
-import {mapTree, toTreeArray} from 'xe-utils'
-import {cloneDeep, omit} from 'lodash-es'
-import {accessRoutes} from '#/router/routes'
-import ParentView from '../../components/ParentView/index.vue'
-import {getUserRoute, type RouteItem} from '#/api/core'
-import {filterTree, transformPathToName} from '#/utils'
-import {Layout} from "ant-design-vue";
+import type { RouteRecordRaw } from 'vue-router';
 
+import { ref } from 'vue';
+
+import { cloneDeep, omit } from 'lodash-es';
+import { defineStore } from 'pinia';
+import { mapTree, toTreeArray } from 'xe-utils';
+
+import { getUserRoute, type RouteItem } from '#/api';
 import { BasicLayout } from '#/layouts';
+import { accessRoutes } from '#/router/routes';
+import { filterTree, transformPathToName } from '#/utils';
+
+import ParentView from '../../components/ParentView/index.vue';
 
 // 匹配views里面所有的.vue文件
 const modules = import.meta.glob('../../views/**/*.vue');
@@ -30,13 +32,13 @@ export const loadView = (view: string) => {
 /** 将component由字符串转成真正的模块 */
 const transformComponentView = (component: string) => {
   if (component === 'BasicLayout') {
-    return BasicLayout as never
+    return BasicLayout as never;
   } else if (component === 'ParentView') {
-    return ParentView as never
+    return ParentView as never;
   } else {
-    return loadView(component) as never
+    return loadView(component) as never;
   }
-}
+};
 
 /**
  * @description 前端来做排序、格式化
@@ -45,17 +47,18 @@ const transformComponentView = (component: string) => {
  * 2. 同时将component由字符串转成真正的模块
  */
 const formatAsyncRoutes = (menus: RouteItem[]) => {
-  if (menus === null || !menus.length) return []
-  menus.sort((a, b) => (a?.sort ?? 0) - (b?.sort ?? 0)) // 排序
-  const pathMap = new Map()
+  menus = menus.data;
+  if (menus === null || menus.length === 0) return [];
+  menus.sort((a, b) => (a?.sort ?? 0) - (b?.sort ?? 0)); // 排序
+  const pathMap = new Map();
   const routes = mapTree(menus, (item) => {
-    pathMap.set(item.id, item.path)
-    if (item.children && item.children.length) {
-      item.children.sort((a, b) => (a?.sort ?? 0) - (b?.sort ?? 0)) // 排序
+    pathMap.set(item.id, item.path);
+    if (item.children && item.children.length > 0) {
+      item.children.sort((a, b) => (a?.sort ?? 0) - (b?.sort ?? 0)); // 排序
     }
     // 部分子菜单，例如：通知公告新增、查看详情，需要选中其父菜单
     if (item.parentId && item.type === 2 && item.permission) {
-      item.activeMenu = pathMap.get(item.parentId)
+      item.activeMenu = pathMap.get(item.parentId);
     }
     return {
       meta: {
@@ -72,65 +75,71 @@ const formatAsyncRoutes = (menus: RouteItem[]) => {
       path: item.path,
       component: transformComponentView(item.component),
       redirect: item.redirect,
-    }
-  })
-  filterTree(routes, (i) => i.meta?.hidden === false)
-  return routes as RouteRecordRaw[]
-}
+    };
+  });
+  filterTree(routes, (i) => i.meta?.hidden === false);
+  return routes as RouteRecordRaw[];
+};
 
 /** 判断路由层级是否大于 2 */
 export const isMultipleRoute = (route: RouteRecordRaw) => {
-  const children = route.children
+  const children = route.children;
   if (children?.length) {
     // 只要有一个子路由的 children 长度大于 0，就说明是三级及其以上路由
-    return children.some((child) => child.children?.length)
+    return children.some((child) => child.children?.length);
   }
-  return false
-}
+  return false;
+};
 
 /** 路由降级（把三级及其以上的路由转化为二级路由） */
 export const flatMultiLevelRoutes = (routes: RouteRecordRaw[]) => {
-  const cloneRoutes = cloneDeep(routes)
+  const cloneRoutes = cloneDeep(routes);
   cloneRoutes.forEach((route) => {
     if (isMultipleRoute(route)) {
-      const flatRoutes = toTreeArray(route.children)
-      route.children = flatRoutes.map((i) => omit(i, 'children')) as RouteRecordRaw[]
+      const flatRoutes = toTreeArray(route.children);
+      route.children = flatRoutes.map((i) =>
+        omit(i, 'children'),
+      ) as RouteRecordRaw[];
     }
-  })
-  return cloneRoutes
-}
+  });
+  return cloneRoutes;
+};
 
 const storeSetup = () => {
   // 所有路由(常驻路由 + 动态路由)
-  const routes = ref<RouteRecordRaw[]>([])
+  const routes = ref<RouteRecordRaw[]>([]);
   // 动态路由(异步路由)
-  const asyncRoutes = ref<RouteRecordRaw[]>([])
+  const asyncRoutes = ref<RouteRecordRaw[]>([]);
 
   // 合并路由
   const setRoutes = (data: RouteRecordRaw[]) => {
-    routes.value = [ ...accessRoutes].concat(data)
-    asyncRoutes.value = data
-  }
+    routes.value = [...accessRoutes].concat(data);
+    asyncRoutes.value = data;
+  };
 
   // 生成路由
   const generateRoutes = (): Promise<RouteRecordRaw[]> => {
     return new Promise((resolve) => {
       // 向后端请求路由数据 这个接口已经根据用户角色过滤了没权限的路由(后端根据用户角色过滤路由显得比较安全些)
       getUserRoute().then((res) => {
-        const asyncRoutes = formatAsyncRoutes(res)
-        setRoutes(asyncRoutes)
-        const cloneRoutes = cloneDeep(asyncRoutes)
-        const flatRoutes = flatMultiLevelRoutes(cloneRoutes as RouteRecordRaw[])
-        resolve(flatRoutes)
-      })
-    })
-  }
+        const asyncRoutes = formatAsyncRoutes(res);
+        setRoutes(asyncRoutes);
+        const cloneRoutes = cloneDeep(asyncRoutes);
+        const flatRoutes = flatMultiLevelRoutes(
+          cloneRoutes as RouteRecordRaw[],
+        );
+        resolve(flatRoutes);
+      });
+    });
+  };
 
   return {
     routes,
     asyncRoutes,
     generateRoutes,
-  }
-}
+  };
+};
 
-export const useRouteStore = defineStore('route', storeSetup, {persist: true})
+export const useRouteStore = defineStore('route', storeSetup, {
+  persist: true,
+});

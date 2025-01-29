@@ -1,6 +1,9 @@
 import { defineConfig } from '@vben/vite-config';
+import { loadEnv } from 'vite';
+import createVitePlugins from './config/plugins'
 
-export default defineConfig(async () => {
+export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd()) as ImportMetaEnv
   return {
     application: {},
     vite: {
@@ -16,5 +19,6 @@ export default defineConfig(async () => {
         },
       },
     },
+    plugins: createVitePlugins(env, command === 'build'),
   };
 });

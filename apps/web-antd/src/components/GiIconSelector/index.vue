@@ -2,7 +2,7 @@
   <a-popover trigger="click">
     <a-input
       placeholder="请选择图标"
-      :model-value="modelValue"
+      v-model:value="props.modelValue"
       allow-clear
       readonly
       @clear="emit('update:modelValue', '')"
@@ -11,33 +11,33 @@
         <template v-if="modelValue">
           <GiSvgIcon v-if="modelValue" :size="16" :name="modelValue" />
         </template>
-<!--        <icon-search v-else />-->
+        <SearchOutlined v-else/>
       </template>
     </a-input>
-
+    <GiSvgIcon :size="16" name="github"/>
     <template #content>
       <div class="container" :class="{ 'is-list': !isGridView }">
         <a-row>
           <section style="flex: 1; margin-right: 8px">
             <a-input
-              v-model="searchValue"
+              v-model:value="searchValue"
               placeholder="搜索图标名称"
               allow-clear
               size="small"
               @input="search"
               @clear="search"
             >
-<!--              <template #prefix>-->
-<!--                <icon-search />-->
-<!--              </template>-->
+              <template #prefix>
+                <SearchOutlined />
+              </template>
             </a-input>
           </section>
 
           <a-button size="small" @click="isGridView = !isGridView">
-<!--            <template #icon>-->
-<!--              <icon-apps v-if="isGridView" />-->
+            <template #icon>
+              <BarsOutlined v-if="isGridView" />
 <!--              <icon-unordered-list v-else />-->
-<!--            </template>-->
+            </template>
           </a-button>
         </a-row>
 
@@ -71,6 +71,7 @@ import { ref, defineOptions, withDefaults, defineProps, defineEmits } from 'vue'
 import { useClipboard } from '@vueuse/core'
 import { message } from 'ant-design-vue'
 import GiSvgIcon from '#/components/GiSvgIcon/index.vue'
+import {SearchOutlined, BarsOutlined} from "@ant-design/icons-vue";
 defineOptions({ name: 'GiIconSelector' })
 
 const props = withDefaults(defineProps<Props>(), {
@@ -81,8 +82,8 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['select', 'update:modelValue'])
 
 // 自定义图标模块
-const SvgIconModules = import.meta.glob('#/assets/icons/*.svg')
-
+const SvgIconModules = import.meta.glob("../../assets/icons/*.svg")
+console.log(SvgIconModules)
 interface Props {
   modelValue?: string
   enableCopy?: boolean
@@ -95,7 +96,7 @@ const isGridView = ref(false)
 
 const iconList: string[] = []
 for (const path in SvgIconModules) {
-  const name = path.replace('/src/assets/icons/', '').replace('.svg', '')
+  const name = path.replace('../../assets/icons/', '').replace('.svg', '')
   iconList.push(name)
 }
 

@@ -10,28 +10,33 @@
     <a-row>
       <slot name="top"></slot>
     </a-row>
-    <a-row justify="space-between" style="padding: 0px 0px 10px;" align="center" class="gi-table__toolbar">
+    <a-row justify="space-between" style="padding: 0 0 20px;" align="center" class="gi-table__toolbar">
       <a-space wrap class="gi-table__toolbar-left" :size="[8, 8]">
         <slot name="toolbar-left"></slot>
       </a-space>
       <a-space wrap class="gi-table__toolbar-right" :size="[8, 8]">
         <slot name="toolbar-right"></slot>
-        <a-tooltip content="刷新">
+        <a-tooltip title="刷新">
           <a-button v-if="showRefreshBtn" @click="refresh">
-            <template #icon> </template>
+            <template #icon>
+              <ReloadOutlined />
+            </template>
           </a-button>
         </a-tooltip>
-        <a-dropdown v-if="showSizeBtn" @select="handleSelect">
-          <a-tooltip content="尺寸">
+        <a-dropdown placement="bottom" v-if="showSizeBtn" @select="handleSelect">
+          <a-tooltip title="尺寸">
             <a-button>
-<!--              <template #icon><icon-table-size style="width: 14px; height: 14px" /></template>-->
+              <template #icon>
+                <ColumnHeightOutlined />
+              </template>
             </a-button>
           </a-tooltip>
-          <template #content>
-<!--            <a-doption v-for="item in sizeList" :key="item.value" :value="item.value" :active="item.value === size">-->
-<!--              {{-->
-<!--                item.label }}-->
-<!--            </a-doption>-->
+          <template #overlay>
+            <a-menu>
+              <a-menu-item v-for="item in sizeList" :key="item.value" :value="item.value" :active="item.value === size">
+                {{item.label }}
+              </a-menu-item>
+            </a-menu>
           </template>
         </a-dropdown>
         <a-popover
@@ -41,7 +46,7 @@
           <a-tooltip content="列设置">
             <a-button>
               <template #icon>
-<!--                <icon-settings />-->
+                <SettingOutlined />
               </template>
             </a-button>
           </a-tooltip>
@@ -50,7 +55,7 @@
               <VueDraggable v-model="settingColumnList">
                 <div v-for="item in settingColumnList" :key="item.title" class="drag-item">
                   <div class="drag-item__move"> </div>
-                  <a-checkbox v-model:model-value="item.show" :disabled="item.disabled">{{ item.title }}</a-checkbox>
+                  <a-checkbox v-model:checked="item.show" :disabled="item.disabled">{{ item.title }}</a-checkbox>
                 </div>
               </VueDraggable>
             </div>
@@ -63,14 +68,14 @@
             </a-row>
           </template>
         </a-popover>
-        <a-tooltip content="全屏">
-          <a-button v-if="showFullscreenBtn" @click="isFullscreen = !isFullscreen">
-            <template #icon>
-<!--              <icon-fullscreen v-if="!isFullscreen" />-->
-<!--              <icon-fullscreen-exit v-else />-->
-            </template>
-          </a-button>
-        </a-tooltip>
+<!--        <a-tooltip content="全屏">-->
+<!--          <a-button v-if="showFullscreenBtn" @click="isFullscreen = !isFullscreen">-->
+<!--            <template #icon>-->
+<!--              <ExpandOutlined v-if="!isFullscreen"/>-->
+<!--              <FullscreenExitOutlined v-else/>-->
+<!--            </template>-->
+<!--          </a-button>-->
+<!--        </a-tooltip>-->
       </a-space>
     </a-row>
     <div class="gi-table__body" :class="`gi-table__body-pagination-${attrs['page-position']}`">
@@ -98,6 +103,7 @@
 import { computed, useAttrs, ref, useSlots, watch, defineOptions, withDefaults, defineProps, defineEmits, defineSlots, defineExpose } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
 import type { DropdownInstance, TableColumnData, TableData, TableInstance } from 'ant-design-vue'
+import {ReloadOutlined, ColumnHeightOutlined, SettingOutlined, ExpandOutlined, FullscreenExitOutlined} from "@ant-design/icons-vue";
 
 defineOptions({ name: 'GiTable', inheritAttrs: false })
 const props = withDefaults(defineProps<Props>(), {
@@ -131,7 +137,6 @@ defineSlots<{
 
 const attrs = useAttrs()
 const slots = useSlots()
-console.log(slots)
 interface Props {
   title?: string
   data: []
