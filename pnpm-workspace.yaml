@@ -13,11 +13,11 @@ packages:
   - docs
   - playground
 catalog:
-  '@ast-grep/napi': ^0.30.0
+  '@ast-grep/napi': ^0.35.0
   '@changesets/changelog-github': ^0.5.0
   '@changesets/cli': ^2.27.9
   '@changesets/git': ^3.0.1
-  '@clack/prompts': ^0.8.1
+  '@clack/prompts': ^0.10.0
   '@commitlint/cli': ^19.5.0
   '@commitlint/config-conventional': ^19.5.0
   '@ctrl/tinycolor': ^4.1.0
@@ -37,7 +37,7 @@ catalog:
   '@tailwindcss/nesting': 0.0.0-insiders.565cd3e
   '@tailwindcss/typography': ^0.5.15
   '@tanstack/vue-query': ^5.60.5
-  '@tanstack/vue-store': ^0.5.7
+  '@tanstack/vue-store': ^0.7.0
   '@types/archiver': ^6.0.3
   '@types/eslint': ^9.6.1
   '@types/html-minifier-terser': ^7.0.2
@@ -114,7 +114,7 @@ catalog:
   lint-staged: ^15.2.10
   lodash.clonedeep: ^4.5.0
   lodash.get: ^4.4.2
-  lucide-vue-next: ^0.460.0
+  lucide-vue-next: ^0.475.0
   medium-zoom: ^1.1.0
   naive-ui: ^2.40.1
   nitropack: ^2.10.4
@@ -132,14 +132,14 @@ catalog:
   postcss-scss: ^4.0.9
   prettier: ^3.3.3
   prettier-plugin-tailwindcss: ^0.6.8
-  publint: ^0.2.12
+  publint: ^0.3.6
   qrcode: ^1.5.4
   radix-vue: ^1.9.9
   resolve.exports: ^2.0.2
   rimraf: ^6.0.1
   rollup: ^4.27.2
   rollup-plugin-visualizer: ^5.12.0
-  sass: 1.80.6
+  sass: 1.85.0
   sortablejs: ^1.15.3
   stylelint: ^16.10.0
   stylelint-config-recess-order: ^5.1.1
@@ -157,11 +157,11 @@ catalog:
   turbo: ^2.3.0
   typescript: ^5.6.3
   unbuild: ^3.0.0-rc.11
-  unplugin-element-plus: ^0.8.0
+  unplugin-element-plus: ^0.9.1
   vee-validate: ^4.14.7
   vite: ^5.4.11
   vite-plugin-compression: ^0.5.1
-  vite-plugin-dts: 4.2.1
+  vite-plugin-dts: 4.5.0
   vite-plugin-html: ^3.2.2
   vite-plugin-lazy-import: ^1.0.7
   vite-plugin-pwa: ^0.21.0
